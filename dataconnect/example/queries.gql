@@ -1,0 +1,35 @@
+mutation CreateCategory @auth(level: USER) {
+  category_insert(data: {
+    name: "Groceries",
+    type: "Expense"
+    icon: "shopping_cart"
+  })
+}
+
+query ListTransactions @auth(level: USER) {
+  transactions {
+    id
+    amount
+    description
+    transactionDate
+  }
+}
+
+mutation UpdateBudget($id: UUID!, $amount: Float!) @auth(level: USER) {
+  budget_update(
+    key: { id: $id }
+    data: {
+      amount: $amount
+    }
+  )
+}
+
+query GetFinancialGoals @auth(level: USER) {
+  financialGoals {
+    id
+    name
+    targetAmount
+    currentAmount
+    targetDate
+  }
+}

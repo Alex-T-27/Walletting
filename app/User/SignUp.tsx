@@ -1,27 +1,35 @@
 import { useRouter } from 'expo-router';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
+import { auth, db } from "../../firebaseConfig";
 const SignUp = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const router = useRouter();
 
-  const handleSignUp = () => {
-    if (!email || !password || !confirmPassword) {
-      Alert.alert('Missing Fields', 'Please fill in all fields.');
+  const handleSignUp = async (): Promise<void> => {
+     if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
       return;
     }
-
-    if (password !== confirmPassword) {
-      Alert.alert('Password Mismatch', 'Passwords do not match.');
-      return;
-    }
-
-    console.log('Signing up with:', email, password);
-    Alert.alert('Account Created', `Welcome, ${email}!`);
-  };
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+     await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        createdAt: new Date().toISOString(),
+      });
+    console.log("✅ Sign up success:", userCredential.user.email);
+    Alert.alert("Success", "Account created successfully!");
+    router.push('/User/Login');
+  } catch (error: any) {
+    console.error("❌ Sign up error:", error);
+    Alert.alert("Error", error.message);
+  }
+};
 
   return (
     <View style={styles.container}>
@@ -61,9 +69,9 @@ const SignUp = () => {
 
       {/* Navigation back to Login */}
       <View style={styles.linkContainer}>
-              <Text>Don't have an account?</Text>
+              <Text>Already have an account?</Text>
               <TouchableOpacity onPress={() => router.push('/User/Login')}>
-                <Text style={styles.linkText}>Sign Up</Text>
+                <Text style={styles.linkText}>Login</Text>
               </TouchableOpacity>
             </View>
           </View>

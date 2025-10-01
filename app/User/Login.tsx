@@ -1,16 +1,28 @@
 import { useRouter } from 'expo-router';
+import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { auth } from "../../firebaseConfig";
 const Login = () => { // removed React.FC typing for simplicity
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const router = useRouter();
-
-  const handleLogin = () => {
-    console.log('Logging in with:', email, password);
-    // Add actual login logic later
-  };
+  const [loading, setLoading] = useState(false);
+  const handleLogin = async (): Promise<void> => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter both email and password.");
+      return;
+    }
+     setLoading(true);
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log("✅ Login success:", userCredential.user.email);
+    Alert.alert("Success", "Logged in successfully!");
+  } catch (error: any) {
+    console.error("❌ Login error:", error);
+    Alert.alert("Error", error.message);
+  }
+};
 
   return (
     <View style={styles.container}>
@@ -19,21 +31,30 @@ const Login = () => { // removed React.FC typing for simplicity
       <TextInput
         style={styles.input}
         placeholder="Email"
+        placeholderTextColor="#999"
         value={email}
         onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
+        placeholderTextColor="#999"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        autoCapitalize="none"
+        autoCorrect={false}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+      <TouchableOpacity
+              style={[styles.button, loading && { opacity: 0.6 }]}
+              onPress={handleLogin}
+              disabled={loading}
+            >
+             <Text style={styles.buttonText}>{loading ? "Logging in..." : "Login"}</Text>
       </TouchableOpacity>
-
       <View style={styles.linkContainer}>
         <Text>Don't have an account?</Text>
         <TouchableOpacity onPress={() => router.push('/User/SignUp')}>
@@ -43,7 +64,7 @@ const Login = () => { // removed React.FC typing for simplicity
     </View>
   );
 };
-
+// router.push('/Home');
 export default Login;
 
 const styles = StyleSheet.create({
