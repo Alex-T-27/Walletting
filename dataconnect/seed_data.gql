@@ -1,0 +1,46 @@
+mutation PopulateDatabaseWithSeedData @auth(level: USER) {
+  user_upsertMany(data: [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      displayName: "Bob User",
+      email: "bob@example.com",
+      createdAt: "2024-01-01T00:00:00Z"
+    },
+    {
+      id: "550e8400-e29b-41d4-a716-446655440001",
+      displayName: "Alice User",
+      email: "alice@example.com",
+      createdAt: "2024-01-02T00:00:00Z"
+    }
+  ])
+  category_upsertMany(data: [
+    {
+      id: "650e8400-e29b-41d4-a716-446655440000",
+      name: "Food",
+      type: "Expense",
+      userId: "550e8400-e29b-41d4-a716-446655440000"
+    },
+    {
+      id: "650e8400-e29b-41d4-a716-446655440001",
+      name: "Salary",
+      type: "Income",
+      userId: "550e8400-e29b-41d4-a716-446655440001"
+    }
+  ])
+  account_upsertMany(data: [
+    {
+      id: "750e8400-e29b-41d4-a716-446655440000",
+      name: "Checking Account",
+      type: "Checking",
+      userId: "550e8400-e29b-41d4-a716-446655440000",
+      balance: 1000.00
+    },
+    {
+      id: "750e8400-e29b-41d4-a716-446655440001",
+      name: "Savings Account",
+      type: "Savings",
+      userId: "550e8400-e29b-41d4-a716-446655440001",
+      balance: 5000.00
+    }
+  ])
+}
