@@ -10,6 +10,7 @@ const Login = () => { // removed React.FC typing for simplicity
   const [loading, setLoading] = useState(false);
   const handleLogin = async (): Promise<void> => {
     if (!email || !password) {
+      console.log("skibidi");
       Alert.alert("Error", "Please enter both email and password.");
       return;
     }
