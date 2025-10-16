@@ -1,32 +1,39 @@
 import { useRouter } from 'expo-router';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { auth } from "../../firebaseConfig";
-const Login = () => { // removed React.FC typing for simplicity
+import { auth, db } from "../../firebaseConfig";
+const SignUp = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const handleLogin = async (): Promise<void> => {
-    if (!email || !password) {
-      Alert.alert("Error", "Please enter both email and password.");
+
+  const handleSignUp = async (): Promise<void> => {
+     if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
       return;
     }
-     setLoading(true);
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    console.log("✅ Login success:", userCredential.user.email);
-    Alert.alert("Success", "Logged in successfully!");
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+     await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        createdAt: new Date().toISOString(),
+      });
+    console.log("✅ Sign up success:", userCredential.user.email);
+    Alert.alert("Success", "Account created successfully!");
+    router.push('/Auth/Login');
   } catch (error: any) {
-    console.error("❌ Login error:", error);
+    console.error("❌ Sign up error:", error);
     Alert.alert("Error", error.message);
   }
 };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Create Account</Text>
 
       <TextInput
         style={styles.input}
@@ -37,6 +44,7 @@ const Login = () => { // removed React.FC typing for simplicity
         keyboardType="email-address"
         autoCapitalize="none"
       />
+
       <TextInput
         style={styles.input}
         placeholder="Password"
@@ -44,28 +52,33 @@ const Login = () => { // removed React.FC typing for simplicity
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        autoCapitalize="none"
-        autoCorrect={false}
       />
 
-      <TouchableOpacity
-              style={[styles.button, loading && { opacity: 0.6 }]}
-              onPress={handleLogin}
-              disabled={loading}
-            >
-             <Text style={styles.buttonText}>{loading ? "Logging in..." : "Login"}</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
+        placeholderTextColor="#999"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+      />
+
+      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+        <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
+
+      {/* Navigation back to Login */}
       <View style={styles.linkContainer}>
-        <Text>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => router.push('/User/SignUp')}>
-          <Text style={styles.linkText}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+              <Text>Already have an account?</Text>
+              <TouchableOpacity onPress={() => router.push('/Auth/Login')}>
+                <Text style={styles.linkText}>Login</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
   );
 };
-// router.push('/Home');
-export default Login;
+
+export default SignUp;
 
 const styles = StyleSheet.create({
   container: {

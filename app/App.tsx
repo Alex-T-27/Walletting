@@ -1,8 +1,7 @@
 import React from 'react';
-import SignUp from './User/SignUp';
+import SignUp from './Auth/SignUp';
 export default function App() {
   return (
-    <SignUp/>
-    // <Login/>
+    <SignUp></SignUp>
   )
 }
