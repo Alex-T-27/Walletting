@@ -13,8 +13,10 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="App" options={{ title: 'Walletting', headerShown: false }} />
+      <Stack screenOptions = {{ headerShown: false }}>
+        <Stack.Screen name="Auth/SignUp" options={{ title: 'Sign up' }} />
+        <Stack.Screen name="Auth/Login" options={{ title: 'Log in' }} />
+        <Stack.Screen name="App" options={{ title: 'Walletting'}} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

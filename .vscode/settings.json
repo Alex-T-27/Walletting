@@ -3,5 +3,6 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
-  }
+  },
+  "cmake.sourceDirectory": "E:/Phong/Projects/Walletting/Walletting/node_modules/react-native/ReactCommon/jsinspector-modern"
 }

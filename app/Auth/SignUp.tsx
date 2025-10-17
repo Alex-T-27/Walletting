@@ -11,7 +11,11 @@ const SignUp = () => {
   const router = useRouter();
 
   const handleSignUp = async (): Promise<void> => {
-     if (password !== confirmPassword) {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter email and password");
+      return;
+    }
+    if (password !== confirmPassword) {
       Alert.alert("Error", "Passwords do not match");
       return;
     }
@@ -22,12 +26,14 @@ const SignUp = () => {
         email: user.email,
         createdAt: new Date().toISOString(),
       });
-    console.log("✅ Sign up success:", userCredential.user.email);
     Alert.alert("Success", "Account created successfully!");
     router.push('/Auth/Login');
-  } catch (error: any) {
-    console.error("❌ Sign up error:", error);
-    Alert.alert("Error", error.message);
+  } catch (error) {
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          Alert.alert('Email already in use', 'This email has been registered')
+      }
+
   }
 };
 
@@ -69,12 +75,12 @@ const SignUp = () => {
 
       {/* Navigation back to Login */}
       <View style={styles.linkContainer}>
-              <Text>Already have an account?</Text>
-              <TouchableOpacity onPress={() => router.push('/Auth/Login')}>
-                <Text style={styles.linkText}>Login</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          <Text>Already have an account?</Text>
+          <TouchableOpacity onPress={() => router.push('/Auth/Login')}>
+            <Text style={styles.linkText}>Login</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
   );
 };
 

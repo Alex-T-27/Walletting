@@ -1,0 +1,46 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "newTerminalName",
+            "type": "promptString",
+            "description": "Enter the new terminal name: ",
+        }
+    ],
+    "tasks": [
+        {
+            "label": "Deploy and Run",
+            "type": "shell",
+            "command": "powershell npx expo start -c",
+            "group": {
+                "kind": "build",
+                "isDefault": true,
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "group": "Deploy and Run",
+            }
+        },
+        {
+            "label": "Open Code Terminal",
+            "type": "shell",
+            "group": "none",
+            "command": "powershell",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "group": "Code",
+            }   
+        },
+        {
+            "label": "KickStart",
+            "dependsOn": ["Deploy and Run", "Open Code Terminal"],
+            "runOptions": {
+                "runOn": "folderOpen",
+            }
+        }
+    ]
+}
