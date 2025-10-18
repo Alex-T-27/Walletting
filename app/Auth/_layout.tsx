@@ -6,7 +6,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
-  initialRouteName: 'Auth/index',
+  initialRouteName: 'User/Login',
 };
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -14,9 +14,8 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack screenOptions = {{ headerShown: false }}>
-        <Stack.Screen name="index" options={{ title: 'Walletting' }} />
-        <Stack.Screen name="Auth" options={{ title: 'Authentication' }} />
-        <Stack.Screen name="Dashboard" options={{ title: 'Dashboard'}} />
+        <Stack.Screen name="Signup" options={{ title: 'Sign up' }} />
+        <Stack.Screen name="Login" options={{ title: 'Log in' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
